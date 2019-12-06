@@ -46,7 +46,7 @@ app.get("/image/:imageName/:imageResolution", (req, res) => {
         } else { // file with required resolution does not exist, we must resize it
             const fileExtension = path.extname(fileAbsolutePath);
             const fileName = path.basename(fileAbsolutePath).replace(fileExtension, "");
-            const resizedFileName = `${fileName}_100x100${fileExtension}`;
+            const resizedFileName = `${fileName}_${imageResolution}${fileExtension}`;
             const resizeFileAbsolutePath = imagesFolder + `${resizedFileName}`;
 
             sharp(fileAbsolutePath).resize(100, 100).toFile(resizeFileAbsolutePath, (err, info) => {
