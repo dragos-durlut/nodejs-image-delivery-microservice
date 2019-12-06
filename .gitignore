@@ -102,3 +102,31 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Vs generated files
+/.vs/
+bin
+obj
+*.njsproj
+*.njsproj.user
+*.sln
+*.suo
+
+# User-specific files
+
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
