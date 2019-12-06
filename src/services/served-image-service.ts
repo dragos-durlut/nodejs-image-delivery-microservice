@@ -13,7 +13,7 @@ export class ServedImageService {
     private imageResolutionHeightRegExp: RegExp = RegExp(/^([\d ]{2,4})/i); // https://regex101.com/
     private imageResolutionWidthRegExp: RegExp = RegExp(/([\d ]{2,4})$/i); // https://regex101.com/
 
-    public getServedImage(imageName: string): ServedImage {
+    public async getServedImage(imageName: string): Promise<ServedImage> {
 
         // tslint:disable-next-line:no-console
         console.log(`ServedImageService: processing image named ${imageName} in folder ${this.imagesFolder}`);
@@ -26,20 +26,10 @@ export class ServedImageService {
         let width: number | null = null;
 
         if (fileExists) {
-            sharp(fileAbsolutePath).metadata((err: Error, metadata: Metadata) => {
-                if (err) {
-                     // tslint:disable-next-line:no-console
-                    console.error(err);
-                }
-                // tslint:disable-next-line:no-console
-                console.log(metadata);
+            await sharp(fileAbsolutePath).metadata().then((metadata: Metadata) => {
                 height = metadata.height;
                 width = metadata.width;
             });
-
-            sharp().metadata().then(({ size }) =>
-                 // tslint:disable-next-line:no-console
-                console.log(size));
         }
 
         // typescript field initializer (maintains "type" definition)

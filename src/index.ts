@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
 });
 
 // define a route handler for the image processing
-app.get("/image/:imageName/:imageResolution", (req, res) => {
+app.get("/image/:imageName/:imageResolution", async (req, res, next) => {
     // res.send(`image named ${req.params.imageName} and resolution ${req.params.imageResolution}`);
     const imageName = req.params.imageName;
     const imageResolution = req.params.imageResolution;
@@ -27,7 +27,7 @@ app.get("/image/:imageName/:imageResolution", (req, res) => {
     }
 
     const serverImageService: ServedImageService = new ServedImageService();
-    const servedImage = serverImageService.getServedImage(imageName);
+    const servedImage = await serverImageService.getServedImage(imageName); //https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
       // tslint:disable-next-line:no-console
     console.log(servedImage);
     if (servedImage.existsOnFileSystem) {
