@@ -21,26 +21,14 @@ app.get("/image/:imageName/:imageResolution", (req, res) => {
     const fileExists = fs.existsSync(fileAbsolutePath);
     if (fileExists) { // file with requested resolution already exists
         const resolutionExists: boolean = false; // to see how to organize file and check for different resolutions
-        if (resolutionExists) {
-            // res.sendFile(fileAbsolutePath);
-            // If the image does exist on the file system, then stream the image to the response object
-            fs.createReadStream(fileAbsolutePath)
-                .pipe(res);
+        if (resolutionExists) {// If the image does exist on the file system, then stream the image to the response object
+            fs.createReadStream(fileAbsolutePath).pipe(res);
         } else { // file with required resolution does not exist, we must resize it
             const fileExtension = path.extname(fileAbsolutePath);
             const fileName = path.basename(fileAbsolutePath).replace(fileExtension, "");
             const resizedFileName = `${fileName}_100x100${fileExtension}`;
             const resizeFileAbsolutePath = imagesFolder + `${resizedFileName}`;
-            // create a write stream of the resized image to the system// we have ti give a new name
-            /*gm(fileAbsolutePath).resize(100, 100).stream((err, stdout, stderr) => {
-                // https://stackoverflow.com/a/12665226/249895
-                // https://stackoverflow.com/questions/30913540/why-fs-createreadstream-only-pipe-one-time
-                // https://stackoverflow.com/questions/12468471/nodejs-gm-resize-and-pipe-to-response
-                // https://stackoverflow.com/questions/25372402/graphicsmagick-processes-resulting-in-empty-file
-                // stdout.pipe(res);
-                const writeStream = fs.createWriteStream(resizeFileAbsolutePath);
-                stdout.pipe(writeStream); // pipe to response
-            });*/
+            
             sharp(fileAbsolutePath).resize(100, 100).toFile(resizeFileAbsolutePath, (err, info) => {
                 if (err) {
                     // tslint:disable-next-line:no-console
@@ -51,17 +39,7 @@ app.get("/image/:imageName/:imageResolution", (req, res) => {
                 }
             });
 
-            // resizedFileStreamPassThrough.pipe(fs.createWriteStream(resizeFileAbsolutePath));
-
-            // Create a write stream to the file system
-            /*req.pipe(
-                new stream.PassThrough().pipe(
-                    fs.createWriteStream(fileAbsolutePath)
-                )
-            );*/
-
-            // pipe to the response at the same time
-            // resizedFileStreamPassThrough.pipe(res);
+            
         }
     } else {
         res.status(404).send({ error: `image named ${imageName} and resolution ${imageResolution} was not found` });
