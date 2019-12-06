@@ -4,6 +4,7 @@ import path from "path";
 import sharp from "sharp";
 import stream from "stream";
 import { RequestImageValidatorService } from "./services/request-image-validator-service";
+import { ServedImageService } from "./services/served-image-service";
 const app = express();
 const port = 8080; // default port to listen
 
@@ -23,6 +24,16 @@ app.get("/image/:imageName/:imageResolution", (req, res) => {
     const imageValidatorService: RequestImageValidatorService = new RequestImageValidatorService(imageName, imageResolution);
     if (!imageValidatorService.validateImage()) {
         res.status(404).send({ errors: imageValidatorService.errors });
+    }
+
+    const serverImageService: ServedImageService = new ServedImageService();
+    const servedImage = serverImageService.getServedImage(imageName);
+      // tslint:disable-next-line:no-console
+    console.log(servedImage);
+    if (servedImage.existsOnFileSystem) {
+        serverImageService.getResizedServedImage(servedImage, imageResolution);
+    } else {
+        res.status(404).send({ error: `File ${imageName} does not exist on file system at ${servedImage.absolutePath}` });
     }
 
     const imagesFolder = __dirname + `/images/`;
