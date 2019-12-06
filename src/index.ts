@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import sharp from "sharp";
 import stream from "stream";
+import { RequestImageValidatorService } from "./services/request-image-validator-service";
 const app = express();
 const port = 8080; // default port to listen
 
@@ -16,6 +17,14 @@ app.get("/image/:imageName/:imageResolution", (req, res) => {
     // res.send(`image named ${req.params.imageName} and resolution ${req.params.imageResolution}`);
     const imageName = req.params.imageName;
     const imageResolution = req.params.imageResolution;
+     // tslint:disable-next-line:no-console
+    console.log(`requested image named ${imageName} and resolution ${imageResolution}`);
+    debugger;
+    const imageValidatorService: RequestImageValidatorService = new RequestImageValidatorService(imageName, imageResolution);
+    if (!imageValidatorService.validateImage()) {
+        res.status(404).send({ errors: imageValidatorService.errors });
+    }
+
     const imagesFolder = __dirname + `/images/`;
     const fileAbsolutePath = imagesFolder + `${imageName}`;
     const fileExists = fs.existsSync(fileAbsolutePath);
@@ -28,7 +37,7 @@ app.get("/image/:imageName/:imageResolution", (req, res) => {
             const fileName = path.basename(fileAbsolutePath).replace(fileExtension, "");
             const resizedFileName = `${fileName}_100x100${fileExtension}`;
             const resizeFileAbsolutePath = imagesFolder + `${resizedFileName}`;
-            
+
             sharp(fileAbsolutePath).resize(100, 100).toFile(resizeFileAbsolutePath, (err, info) => {
                 if (err) {
                     // tslint:disable-next-line:no-console
@@ -39,7 +48,6 @@ app.get("/image/:imageName/:imageResolution", (req, res) => {
                 }
             });
 
-            
         }
     } else {
         res.status(404).send({ error: `image named ${imageName} and resolution ${imageResolution} was not found` });
