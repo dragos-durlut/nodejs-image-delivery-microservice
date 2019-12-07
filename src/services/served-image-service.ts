@@ -4,11 +4,10 @@ import sharp, { Metadata } from "sharp";
 import { ResizedServedImage } from "../models/resized-served-image";
 import { ServedImage } from "../models/served-image";
 import { ServedImageResolution } from "../models/served-image-resolution";
+import { FileUtils } from "../utils/file-utils";
 
 export class ServedImageService {
 
-    // public servedImage: ServedImage;
-    // public resizedServedImage: ResizedServedImage;
     private imagesFolder: string = path.join(  __dirname , `/../images/`);
     private imageResolutionHeightRegExp: RegExp = RegExp(/^([\d ]{2,4})/i); // https://regex101.com/
     private imageResolutionWidthRegExp: RegExp = RegExp(/([\d ]{2,4})$/i); // https://regex101.com/
@@ -17,8 +16,8 @@ export class ServedImageService {
 
         console.log(`ServedImageService: processing image named ${imageName} in folder ${this.imagesFolder}`);
 
-        const fileAbsolutePath: string = path.join( this.imagesFolder , imageName);
-        const fileExists: boolean = fs.existsSync(fileAbsolutePath);
+        const fileAbsolutePath: string = path.join(this.imagesFolder, imageName);
+        const fileExists: boolean = await FileUtils.fileExists(fileAbsolutePath);
         const fileExtension: string = path.extname(fileAbsolutePath);
         const fileName: string = path.basename(fileAbsolutePath).replace(fileExtension, "");
         let height: number | null = null;
