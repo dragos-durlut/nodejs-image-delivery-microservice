@@ -52,36 +52,21 @@ export class ServedImageService {
         const resizedFileDirectoryPath = FolderStructureUtils.getResolutionImageDirectoryPath(imageResolution);
         const resizedFileAbsolutePath = FolderStructureUtils.getImageWithResolutionPath(servedImage.fullName, imageResolution);
         const resizedImageResolution: ServedImageResolution = ServedImageResolution.getResolution(imageResolution);
-        const areResolutionsEqual: boolean = ServedImageResolution.AreResolutionsEqual(resizedImageResolution, servedImage.resolution);
-        if (areResolutionsEqual) {// TODO: see if this if is still neccessary or we will remove code; maybe we will duplicate the image in the folder to ease access; if resolution is equal just copy the file
-            const originalServedImage = Object.assign(new ResizedServedImage(), {
-                fullName: servedImage.fullName,
-                fileName: servedImage.fileName,
-                extension: servedImage.extension,
-                absolutePath: servedImage.absolutePath,
-                directoryAbsolutePath: servedImage.directoryAbsolutePath,
-                existsOnFileSystem: servedImage.existsOnFileSystem,
-                resolution: servedImage.resolution,
-                isSameAsOriginalImage: true,
-                originalImage: servedImage
-            });
-            return Promise.resolve<ResizedServedImage>(originalServedImage);
-        } else {
-            const resizedServedImage = Object.assign(new ResizedServedImage(), {
-                fullName: servedImage.fullName,
-                fileName: servedImage.fileName,
-                extension: servedImage.extension,
-                absolutePath: resizedFileAbsolutePath,
-                directoryAbsolutePath: resizedFileDirectoryPath,
-                existsOnFileSystem: null, // will be set below
-                resolution: resizedImageResolution,
-                isSameAsOriginalImage: false,
-                originalImage: servedImage
-            });
-            console.log(resizedServedImage);
-            resizedServedImage.existsOnFileSystem = await this.ensureResizedImageExistence(resizedServedImage);
-            return Promise.resolve<ResizedServedImage>(resizedServedImage);
-        }
+
+        const resizedServedImage = Object.assign(new ResizedServedImage(), {
+            fullName: servedImage.fullName,
+            fileName: servedImage.fileName,
+            extension: servedImage.extension,
+            absolutePath: resizedFileAbsolutePath,
+            directoryAbsolutePath: resizedFileDirectoryPath,
+            existsOnFileSystem: null, // will be set below
+            resolution: resizedImageResolution,
+            isSameAsOriginalImage: false,
+            originalImage: servedImage
+        });
+        console.log(resizedServedImage);
+        resizedServedImage.existsOnFileSystem = await this.ensureResizedImageExistence(resizedServedImage);
+        return Promise.resolve<ResizedServedImage>(resizedServedImage);
     }
 
     private async ensureResizedImageExistence(resizedServedImage: ResizedServedImage): Promise<boolean> {
