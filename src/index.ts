@@ -1,6 +1,7 @@
 import express from "express";
 import { RequestImageValidatorService } from "./services/request-image-validator-service";
 import { ServedImageService } from "./services/served-image-service";
+import { FolderStructureUtils } from "./utils/folder-structure-utils";
 const app = express();
 const port = 8080; // default port to listen
 
@@ -22,13 +23,21 @@ app.get("/image/:imageName/:imageResolution", async (req, res, next) => {
         res.status(404).send({ errors: imageValidatorService.errors });
     }
 
+    const imageExistsPhysically: boolean = await FolderStructureUtils.imageWithResolutionExists(imageName, imageResolution);
+    console.log(`imageExistsPhysically ${imageExistsPhysically}`);
+    if (imageExistsPhysically) {
+        const imagePath = FolderStructureUtils.getImageWithResolutionPath(imageName, imageResolution);
+        res.status(200).sendFile(imagePath);
+        return;
+    }
+
     const serverImageService: ServedImageService = new ServedImageService();
-    const servedImage = await serverImageService.getServedImage(imageName); // https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
-    if (servedImage.existsOnFileSystem) {// if image exists we can proceed to try and serve the resized image
-        const resizedImage = await serverImageService.getResizedServedImage(servedImage, imageResolution);
+    const originalServedImage = await serverImageService.getOriginalServedImage(imageName); // https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
+    if (originalServedImage.existsOnFileSystem) {// if image exists we can proceed to try and serve the resized image
+        const resizedImage = await serverImageService.getResizedServedImage(originalServedImage, imageResolution);
         res.status(200).sendFile(resizedImage.absolutePath);
     } else {
-        res.status(404).send({ error: `File ${imageName} does not exist on file system at ${servedImage.absolutePath}` });
+        res.status(404).send({ error: `File ${imageName} does not exist on file system at ${originalServedImage.absolutePath}` });
     }
 
 });

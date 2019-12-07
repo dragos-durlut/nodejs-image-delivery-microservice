@@ -1,22 +1,19 @@
 import fs from "fs";
 import path from "path";
-import sharp, { Metadata } from "sharp";
+import sharp, { bool, Metadata } from "sharp";
 import { ResizedServedImage } from "../models/resized-served-image";
 import { ServedImage } from "../models/served-image";
 import { ServedImageResolution } from "../models/served-image-resolution";
 import { FileUtils } from "../utils/file-utils";
+import { FolderStructureUtils } from "../utils/folder-structure-utils";
 
 export class ServedImageService {
 
-    private imagesFolder: string = path.join(  __dirname , `/../images/`);
-    private imageResolutionHeightRegExp: RegExp = RegExp(/^([\d ]{2,4})/i); // https://regex101.com/
-    private imageResolutionWidthRegExp: RegExp = RegExp(/([\d ]{2,4})$/i); // https://regex101.com/
+    public async getOriginalServedImage(imageName: string): Promise<ServedImage> {
+        const originalImagesDirectory = FolderStructureUtils.getOriginalImagesDirectoryPath();
+        console.log(`ServedImageService: processing image named ${imageName} in folder ${originalImagesDirectory}`);
 
-    public async getServedImage(imageName: string): Promise<ServedImage> {
-
-        console.log(`ServedImageService: processing image named ${imageName} in folder ${this.imagesFolder}`);
-
-        const fileAbsolutePath: string = path.join(this.imagesFolder, imageName);
+        const fileAbsolutePath: string = FolderStructureUtils.getOriginalImageAbsolutePath(imageName);
         const fileExists: boolean = await FileUtils.fileExists(fileAbsolutePath);
         const fileExtension: string = path.extname(fileAbsolutePath);
         const fileName: string = path.basename(fileAbsolutePath).replace(fileExtension, "");
@@ -29,6 +26,7 @@ export class ServedImageService {
                 width = metadata.width;
             }).catch((err) => {
                 console.log(err);
+                throw err;
             });
         }
 
@@ -38,25 +36,24 @@ export class ServedImageService {
             fileName,
             extension: fileExtension,
             absolutePath: fileAbsolutePath,
-            directoryAbsolutePath: this.imagesFolder,
+            directoryAbsolutePath: originalImagesDirectory,
             existsOnFileSystem: fileExists,
             resolution: Object.assign(new ServedImageResolution(), {
                 width,
                 height
             })
         });
-
+        console.log(servedImage);
         return servedImage;
 
     }
 
     public async getResizedServedImage(servedImage: ServedImage, imageResolution: string): Promise<ResizedServedImage> {
-
-        const resizedFileName = `${servedImage.fileName}_${imageResolution}${servedImage.extension}`;
-        const resizedFileAbsolutePath = `${this.imagesFolder}${resizedFileName}`;
-        const resizedImageResolution = this.getResolution(imageResolution);
+        const resizedFileDirectoryPath = FolderStructureUtils.getResolutionImageDirectoryPath(imageResolution);
+        const resizedFileAbsolutePath = FolderStructureUtils.getImageWithResolutionPath(servedImage.fullName, imageResolution);
+        const resizedImageResolution: ServedImageResolution = ServedImageResolution.getResolution(imageResolution);
         const areResolutionsEqual: boolean = ServedImageResolution.AreResolutionsEqual(resizedImageResolution, servedImage.resolution);
-        if (areResolutionsEqual) {
+        if (areResolutionsEqual) {// TODO: see if this if is still neccessary or we will remove code; maybe we will duplicate the image in the folder to ease access; if resolution is equal just copy the file
             const originalServedImage = Object.assign(new ResizedServedImage(), {
                 fullName: servedImage.fullName,
                 fileName: servedImage.fileName,
@@ -71,35 +68,35 @@ export class ServedImageService {
             return Promise.resolve<ResizedServedImage>(originalServedImage);
         } else {
             const resizedServedImage = Object.assign(new ResizedServedImage(), {
-                fullName: resizedFileName,
+                fullName: servedImage.fullName,
                 fileName: servedImage.fileName,
                 extension: servedImage.extension,
-                absolutePath: resizedFileAbsolutePath, // TODO: make path with other folder
-                directoryAbsolutePath: this.imagesFolder, // TODO: make path with other folder
-                existsOnFileSystem: null, // TODO: set below
+                absolutePath: resizedFileAbsolutePath,
+                directoryAbsolutePath: resizedFileDirectoryPath,
+                existsOnFileSystem: null, // will be set below
                 resolution: resizedImageResolution,
                 isSameAsOriginalImage: false,
                 originalImage: servedImage
             });
-            resizedServedImage.existsOnFileSystem = fs.existsSync(resizedServedImage.absolutePath);
-            if (!resizedServedImage.existsOnFileSystem) {
-                await sharp(servedImage.absolutePath).resize(resizedServedImage.resolution.width, resizedServedImage.resolution.height).toFile(resizedServedImage.absolutePath);
-                resizedServedImage.existsOnFileSystem = true;
-            }
+            console.log(resizedServedImage);
+            resizedServedImage.existsOnFileSystem = await this.ensureResizedImageExistence(resizedServedImage);
             return Promise.resolve<ResizedServedImage>(resizedServedImage);
         }
     }
 
-    private getResolution(imageResolution: string): ServedImageResolution {
-        const height: number = parseInt(this.imageResolutionHeightRegExp.exec(imageResolution)[0], 10);
-        const width: number = parseInt(this.imageResolutionWidthRegExp.exec(imageResolution)[0], 10);
-
-        console.log(`height: ${height} | width: ${width}`);
-
-        const servedImageResolution = Object.assign(new ServedImageResolution(), {
-            width,
-            height
-        });
-        return servedImageResolution;
+    private async ensureResizedImageExistence(resizedServedImage: ResizedServedImage): Promise<boolean> {
+        resizedServedImage.existsOnFileSystem = await FileUtils.fileExists(resizedServedImage.absolutePath);
+        const imageResolution: string = resizedServedImage.resolution.getResolutionString();
+        if (!resizedServedImage.existsOnFileSystem) {
+            const resizedImageDirectory: string = FolderStructureUtils.getResolutionImageDirectoryPath(imageResolution);
+            const resizedImageDirectoryExists: boolean = await FileUtils.directoryExists(resizedImageDirectory);
+            if (!resizedImageDirectoryExists) {
+                await FileUtils.createDirectory(resizedImageDirectory);
+            }
+            await sharp(resizedServedImage.originalImage.absolutePath).resize(resizedServedImage.resolution.width, resizedServedImage.resolution.height).toFile(resizedServedImage.absolutePath);
+            resizedServedImage.existsOnFileSystem = true;
+        }
+        return resizedServedImage.existsOnFileSystem;
     }
+
 }
