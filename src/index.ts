@@ -27,7 +27,7 @@ app.get("/image/:imageName/:imageResolution", async (req, res, next) => {
     }
 
     const serverImageService: ServedImageService = new ServedImageService();
-    const servedImage = await serverImageService.getServedImage(imageName); //https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
+    const servedImage = await serverImageService.getServedImage(imageName); // https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
       // tslint:disable-next-line:no-console
     console.log(servedImage);
     if (servedImage.existsOnFileSystem) {
