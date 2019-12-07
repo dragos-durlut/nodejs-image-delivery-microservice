@@ -1,8 +1,4 @@
 import express from "express";
-import fs from "fs";
-import path from "path";
-import sharp from "sharp";
-import stream from "stream";
 import { RequestImageValidatorService } from "./services/request-image-validator-service";
 import { ServedImageService } from "./services/served-image-service";
 const app = express();
