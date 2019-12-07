@@ -82,9 +82,10 @@ export class ServedImageService {
                 isSameAsOriginalImage: false,
                 originalImage: servedImage
             });
-            const fileExists: boolean = fs.existsSync(resizedServedImage.absolutePath);
-            if (!fileExists) {
+            resizedServedImage.existsOnFileSystem = fs.existsSync(resizedServedImage.absolutePath);
+            if (!resizedServedImage.existsOnFileSystem) {
                 await sharp(servedImage.absolutePath).resize(resizedServedImage.resolution.width, resizedServedImage.resolution.height).toFile(resizedServedImage.absolutePath);
+                resizedServedImage.existsOnFileSystem = true;
             }
             return Promise.resolve<ResizedServedImage>(resizedServedImage);
         }
