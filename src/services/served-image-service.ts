@@ -15,7 +15,7 @@ export class ServedImageService {
 
     public async getServedImage(imageName: string): Promise<ServedImage> {
 
-        // tslint:disable-next-line:no-console
+        
         console.log(`ServedImageService: processing image named ${imageName} in folder ${this.imagesFolder}`);
 
         const fileAbsolutePath: string = path.join( this.imagesFolder , imageName);
@@ -29,6 +29,8 @@ export class ServedImageService {
             await sharp(fileAbsolutePath).metadata().then((metadata: Metadata) => {
                 height = metadata.height;
                 width = metadata.width;
+            }).catch((err) => {
+                console.log(err);
             });
         }
 
@@ -66,8 +68,7 @@ export class ServedImageService {
     private getResolution(imageResolution: string): ServedImageResolution {
         const height: number = parseInt(this.imageResolutionHeightRegExp.exec(imageResolution)[0], 10);
         const width: number = parseInt(this.imageResolutionWidthRegExp.exec(imageResolution)[0], 10);
-
-        // tslint:disable-next-line:no-console
+        
         console.log(`height: ${height} | width: ${width}`);
 
         const servedImageResolution = Object.assign(new ServedImageResolution(), {
