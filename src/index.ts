@@ -24,7 +24,6 @@ app.get("/image/:imageName/:imageResolution", async (req, res, next) => {
     }
 
     const imageExistsPhysically: boolean = await FolderStructureUtils.imageWithResolutionExists(imageName, imageResolution);
-    console.log(`imageExistsPhysically ${imageExistsPhysically}`);
     if (imageExistsPhysically) {
         const imagePath = FolderStructureUtils.getImageWithResolutionPath(imageName, imageResolution);
         res.status(200).sendFile(imagePath);

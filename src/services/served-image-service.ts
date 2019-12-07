@@ -81,6 +81,7 @@ export class ServedImageService {
             await sharp(resizedServedImage.originalImage.absolutePath).resize(resizedServedImage.resolution.width, resizedServedImage.resolution.height).toFile(resizedServedImage.absolutePath);
             resizedServedImage.existsOnFileSystem = true;
         }
+
         return resizedServedImage.existsOnFileSystem;
     }
 
