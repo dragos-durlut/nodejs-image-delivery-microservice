@@ -26,10 +26,16 @@ app.get("/image/:imageName/:imageResolution", async (req, res, next) => {
     }
 
     const dbClient: DbClient = new DbClient();
-    dbClient.incrementValue(imageName, true, false, true);
+    const incrementTimesServed: boolean = true;
+    let incrementTimesResized: boolean = false;
+    let incrementTimesDirectlyServed: boolean = false;
 
     const imageExistsPhysically: boolean = await FolderStructureUtils.imageWithResolutionExists(imageName, imageResolution);
     if (imageExistsPhysically) {
+
+        incrementTimesDirectlyServed = true;
+        dbClient.incrementValue(imageName, incrementTimesServed, incrementTimesResized, incrementTimesDirectlyServed);
+
         const imagePath = FolderStructureUtils.getImageWithResolutionPath(imageName, imageResolution);
         res.status(200).sendFile(imagePath);
         return;
@@ -38,12 +44,23 @@ app.get("/image/:imageName/:imageResolution", async (req, res, next) => {
     const serverImageService: ServedImageService = new ServedImageService();
     const originalServedImage = await serverImageService.getOriginalServedImage(imageName); // https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
     if (originalServedImage.existsOnFileSystem) {// if image exists we can proceed to try and serve the resized image
+
+        incrementTimesResized = true;
+        dbClient.incrementValue(imageName, incrementTimesServed, incrementTimesResized, incrementTimesDirectlyServed);
+
         const resizedImage = await serverImageService.getResizedServedImage(originalServedImage, imageResolution);
         res.status(200).sendFile(resizedImage.absolutePath);
     } else {
         res.status(404).send({ error: `File ${imageName} does not exist on file system at ${originalServedImage.absolutePath}` });
     }
 
+});
+
+// define a route handler for the default home page
+app.get("/stats", async (req, res) => {
+    const dbClient: DbClient = new DbClient();
+    const html = await dbClient.getImagesCollectionHtml();
+    res.status(200).send(html);
 });
 
 // start the Express server
