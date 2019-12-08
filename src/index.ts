@@ -1,4 +1,5 @@
 import express from "express";
+import { DbClient } from "./db/db-client";
 import { RequestImageValidatorService } from "./services/request-image-validator-service";
 import { ServedImageService } from "./services/served-image-service";
 import { FolderStructureUtils } from "./utils/folder-structure-utils";
@@ -15,6 +16,7 @@ app.get("/", (req, res) => {
 // define a route handler for the image processing
 app.get("/image/:imageName/:imageResolution", async (req, res, next) => {
     // res.send(`image named ${req.params.imageName} and resolution ${req.params.imageResolution}`);
+
     const imageName = req.params.imageName;
     const imageResolution = req.params.imageResolution;
     console.log(`requested image named ${imageName} and resolution ${imageResolution}`);
@@ -22,6 +24,9 @@ app.get("/image/:imageName/:imageResolution", async (req, res, next) => {
     if (!imageValidatorService.validateImage()) {
         res.status(404).send({ errors: imageValidatorService.errors });
     }
+
+    const dbClient: DbClient = new DbClient();
+    dbClient.incrementValue(imageName, true, false, true);
 
     const imageExistsPhysically: boolean = await FolderStructureUtils.imageWithResolutionExists(imageName, imageResolution);
     if (imageExistsPhysically) {
