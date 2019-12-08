@@ -3,6 +3,17 @@
 Node JS Image Delivery Microservice Challenge for OwnZones
 
 ---
+## Development process described here:
+
+    [http://justcodesnippets.durlut.ro/index.php/2019/12/06/node-js-image-delivery-microservice-challenge-setup/][71]
+    [http://justcodesnippets.durlut.ro/index.php/2019/12/07/node-js-image-delivery-microservice-challenge-refactoring-1/][72]
+    [http://justcodesnippets.durlut.ro/index.php/2019/12/07/node-js-image-delivery-microservice-challenge-folder-structure/][73]
+    [http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-mongo-db-stats-page/][74]
+    [http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-unit-tests/][75]
+    [http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-documentation-how-to-run/][76]
+
+
+---
 ## Requirements
 
 For development, you will only need Node.js and a node global package, NPM, installed in your environement.
@@ -67,7 +78,9 @@ No config file so far
 
 To run the microsevice you will need to execute command `npm run start`
 
-To see the stats you can go to [http://localhost:8080/image/stats][5] in Postman or in a broswer window. You should see something like this:![][1]![][2]
+To see the stats you can go to [http://localhost:8080/image/stats][5] in Postman or in a broswer window. You should see something like this:
+
+![][1]![][2]
 
 In order to get the resized image you call this address in Postman or in Web Browser: [http://localhost:8080/image/eye.jpg/300×300][3]
 
@@ -84,3 +97,12 @@ You will also notice the creation of a folder that mathches thr requested resolu
 [3]: http://localhost:8080/image/eye.jpg/300x300
 [4]: http://justcodesnippets.durlut.ro/wp-content/uploads/2019/12/Capture9.png
 [5]: http://localhost:8080/image/stats
+
+
+
+[71]:http://justcodesnippets.durlut.ro/index.php/2019/12/06/node-js-image-delivery-microservice-challenge-setup/
+[72]:http://justcodesnippets.durlut.ro/index.php/2019/12/07/node-js-image-delivery-microservice-challenge-refactoring-1/
+[73]:http://justcodesnippets.durlut.ro/index.php/2019/12/07/node-js-image-delivery-microservice-challenge-folder-structure/
+[74]:http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-mongo-db-stats-page/
+[75]:http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-unit-tests/
+[76]:http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-documentation-how-to-run/
