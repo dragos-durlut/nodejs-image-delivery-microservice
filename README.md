@@ -60,3 +60,7 @@ No config file so far
 ## Simple build for production
 
     $ npm run-script build
+
+## Running the tests
+
+    $ npm test
