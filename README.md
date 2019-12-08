@@ -67,7 +67,7 @@ No config file so far
 
 To run the microsevice you will need to execute command `npm run start`
 
-To see the stats you can go to **** in Postman or in a broswer window. You should see something like this:![][1]![][2]
+To see the stats you can go to [http://localhost:8080/image/stats][5] in Postman or in a broswer window. You should see something like this:![][1]![][2]
 
 In order to get the resized image you call this address in Postman or in Web Browser: [http://localhost:8080/image/eye.jpg/300×300][3]
 
@@ -83,3 +83,4 @@ You will also notice the creation of a folder that mathches thr requested resolu
 [2]: http://justcodesnippets.durlut.ro/wp-content/uploads/2019/12/Capture8.png
 [3]: http://localhost:8080/image/eye.jpg/300x300
 [4]: http://justcodesnippets.durlut.ro/wp-content/uploads/2019/12/Capture9.png
+[5]: http://localhost:8080/image/stats
