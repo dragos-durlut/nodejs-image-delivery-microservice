@@ -2,7 +2,7 @@
 
 Node JS Image Delivery Microservice Challenge for OwnZones
 
----
+
 ## Development process described here:
 
     [Setup](http://justcodesnippets.durlut.ro/index.php/2019/12/06/node-js-image-delivery-microservice-challenge-setup/)
@@ -13,7 +13,7 @@ Node JS Image Delivery Microservice Challenge for OwnZones
     [Documentation & How to run](http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-documentation-how-to-run/)
 
 
----
+
 ## Requirements
 
 For development, you will only need Node.js and a node global package, NPM, installed in your environement.
