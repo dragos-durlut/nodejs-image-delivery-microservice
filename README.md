@@ -60,3 +60,26 @@ No config file so far
 ## Running the tests
 
     $ npm test
+
+
+---
+## How to RUN
+
+To run the microsevice you will need to execute command `npm run start`
+
+To see the stats you can go to **** in Postman or in a broswer window. You should see something like this:![][1]![][2]
+
+In order to get the resized image you call this address in Postman or in Web Browser: [http://localhost:8080/image/eye.jpg/300×300][3]
+
+Important note: you must have the image in `dist/images/original/` folder or you will get a 404 status.
+
+You will get a 200 response along with the resized image:
+
+![][4]
+
+You will also notice the creation of a folder that mathches thr requested resolution.
+
+[1]: http://justcodesnippets.durlut.ro/wp-content/uploads/2019/12/Capture7.png
+[2]: http://justcodesnippets.durlut.ro/wp-content/uploads/2019/12/Capture8.png
+[3]: http://localhost:8080/image/eye.jpg/300x300
+[4]: http://justcodesnippets.durlut.ro/wp-content/uploads/2019/12/Capture9.png
