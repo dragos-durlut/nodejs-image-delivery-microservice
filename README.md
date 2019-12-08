@@ -5,12 +5,12 @@ Node JS Image Delivery Microservice Challenge for OwnZones
 
 ## Development process described here:
 
-    [Setup](http://justcodesnippets.durlut.ro/index.php/2019/12/06/node-js-image-delivery-microservice-challenge-setup/)
-    [Refactoring #1](http://justcodesnippets.durlut.ro/index.php/2019/12/07/node-js-image-delivery-microservice-challenge-refactoring-1/)
-    [Folder structure](http://justcodesnippets.durlut.ro/index.php/2019/12/07/node-js-image-delivery-microservice-challenge-folder-structure/)
-    [Mongo DB & Stats page](http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-mongo-db-stats-page/)
-    [Unit tests](http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-unit-tests/)
-    [Documentation & How to run](http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-documentation-how-to-run/)
+[Setup](http://justcodesnippets.durlut.ro/index.php/2019/12/06/node-js-image-delivery-microservice-challenge-setup/)
+[Refactoring #1](http://justcodesnippets.durlut.ro/index.php/2019/12/07/node-js-image-delivery-microservice-challenge-refactoring-1/)
+[Folder structure](http://justcodesnippets.durlut.ro/index.php/2019/12/07/node-js-image-delivery-microservice-challenge-folder-structure/)
+[Mongo DB & Stats page](http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-mongo-db-stats-page/)
+[Unit tests](http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-unit-tests/)
+[Documentation & How to run](http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-documentation-how-to-run/)
 
 
 
