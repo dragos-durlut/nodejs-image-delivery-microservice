@@ -17,7 +17,11 @@ Node JS Image Delivery Microservice Challenge for OwnZones
 
 [Documentation & How to run](http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-documentation-how-to-run/)
 
+[Docker, Node JS & MongoDB](http://justcodesnippets.durlut.ro/index.php/2019/12/09/node-js-image-delivery-microservice-challenge-docker-node-js-mongodb/)
 
+## DOCKER
+
+For Docker instructions, look at the bottom of this file
 
 ## Requirements
 
@@ -83,11 +87,11 @@ No config file so far
 
 To run the microsevice you will need to execute command `npm run start`
 
-To see the stats you can go to [http://localhost:8080/image/stats][5] in Postman or in a broswer window. You should see something like this:
+To see the stats you can go to [http://localhost:3000/image/stats][5] in Postman or in a broswer window. You should see something like this:
 
 ![][1]![][2]
 
-In order to get the resized image you call this address in Postman or in Web Browser: [http://localhost:8080/image/eye.jpg/300×300][3]
+In order to get the resized image you call this address in Postman or in Web Browser: [http://localhost:3000/image/eye.jpg/300×300][3]
 
 Important note: you must have the image in `dist/images/original/` folder or you will get a 404 status.
 
@@ -99,15 +103,21 @@ You will also notice the creation of a folder that mathches thr requested resolu
 
 [1]: http://justcodesnippets.durlut.ro/wp-content/uploads/2019/12/Capture7.png
 [2]: http://justcodesnippets.durlut.ro/wp-content/uploads/2019/12/Capture8.png
-[3]: http://localhost:8080/image/eye.jpg/300x300
+[3]: http://localhost:3000/image/eye.jpg/300x300
 [4]: http://justcodesnippets.durlut.ro/wp-content/uploads/2019/12/Capture9.png
-[5]: http://localhost:8080/image/stats
+[5]: http://localhost:3000/image/stats
 
 
 
-[71]:http://justcodesnippets.durlut.ro/index.php/2019/12/06/node-js-image-delivery-microservice-challenge-setup/
-[72]:http://justcodesnippets.durlut.ro/index.php/2019/12/07/node-js-image-delivery-microservice-challenge-refactoring-1/
-[73]:http://justcodesnippets.durlut.ro/index.php/2019/12/07/node-js-image-delivery-microservice-challenge-folder-structure/
-[74]:http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-mongo-db-stats-page/
-[75]:http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-unit-tests/
-[76]:http://justcodesnippets.durlut.ro/index.php/2019/12/08/node-js-image-delivery-microservice-challenge-documentation-how-to-run/
+---
+## How to RUN with DOCKER
+
+Run the docker command: `docker-compose up --build`
+
+After docker finishes building we call this address: http://localhost:3000/image/eye.jpg/600x300
+
+And then this address: http://localhost:3000/image/cat.jpg/600x300
+
+And then this address: http://localhost:3000/image/dog.jpg/600x300
+
+And then the stats address http://localhost:3000/stats/
