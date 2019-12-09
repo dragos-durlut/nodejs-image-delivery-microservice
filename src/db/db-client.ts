@@ -1,38 +1,39 @@
-import mongodb from "mongodb";
+// https://know-thy-code.com/mongoose-schemas-models-typescript/
+import { connect, connection, Connection } from "mongoose";
+import { IImage, IImageModel, Image } from "./image-schema";
+
+declare interface IModels {
+    Image: IImageModel;
+
+}
 
 export class DbClient {
 
-    public incrementValue(imageFullName: string, incrementTimesServed: boolean, incrementTimesResized: boolean, incrementTimesDirectlyServed: boolean) {
-        const client = this.getClient();
-        client.connect((err) => {
-
-            const imagesCollection = this.getImagesCollection(client);
-            // https://docs.mongodb.com/manual/reference/method/db.collection.findOneAndUpdate/
-            imagesCollection.findOneAndUpdate(
-                { imageName: imageFullName }
-                , {
-                    $inc: {
-                        timesServed: incrementTimesServed ? 1 : 0
-                        , timesResized: incrementTimesResized ? 1 : 0
-                        , timesDirectlyServed: incrementTimesDirectlyServed ? 1 : 0
-                    }
-                },
-                { upsert: true }
-            );
-
-            client.close();
-        });
+    public static get Models() {
+        if (!DbClient.instance) {
+            DbClient.instance = new DbClient();
+        }
+        return DbClient.instance.models;
     }
 
-    public getImagesCollectionHtml(): Promise<string> {
-        // https://medium.com/thecodinghype/https-medium-com-thecodinghype-reading-from-mongodb-database-using-express-js-and-node-js-250ef8b9282a
-        // https://stackoverflow.com/questions/35246713/node-js-mongo-find-and-return-data
-        const client: mongodb.MongoClient = this.getClient();
-        return client.connect().then((connectedClient) => {
-            return this.getImagesCollection(connectedClient);
-        }).then((imagesCollection) => {
-            return imagesCollection.find().toArray();
-        }).then(async (images) => {
+    public static async incrementImageValues(imageName: string, incrementTimesServed: boolean, incrementTimesResized: boolean, incrementTimesDirectlyServed: boolean): Promise<IImage> {
+       return DbClient.Models.Image.findOneAndUpdate({
+            imageName
+        }
+            , {
+                $inc: {
+                    timesServed: incrementTimesServed ? 1 : 0
+                    , timesResized: incrementTimesResized ? 1 : 0
+                    , timesDirectlyServed: incrementTimesDirectlyServed ? 1 : 0
+                }
+            }, {
+            new: true, upsert: true
+        }).exec();
+    }
+
+    // https://mongoosejs.com/docs/promises.html
+    public static async getImagesCollectionHtml(): Promise<string> {
+        return DbClient.Models.Image.find({}).exec().then(async (images) => {
             // write HTML output
             let output: string = "<html><header><title>Images</title></header><body>";
             output += "<h1>List retrieved from DB</h1>";
@@ -47,23 +48,33 @@ export class DbClient {
             // write HTML output (ending)
             output += "</table></body></html>";
             console.log(output);
-            await client.close();
             return output;
         });
     }
 
-    private getImageStatsDb(client: mongodb.MongoClient): mongodb.Db {
-        return client.db("imageStats");
+    private static instance: DbClient;
+
+    private db: Connection;
+    private models: IModels;
+
+    private constructor() {
+        connect("mongodb://mongo:27017/docker-node-mongo", { useNewUrlParser: true });
+        this.db = connection;
+        this.db.on("open", this.connected);
+        this.db.on("error", this.error);
+
+        this.models = {
+            Image: new Image().model
+            // this is where we initialise all models
+        };
     }
 
-    private getImagesCollection(client: mongodb.MongoClient): mongodb.Collection<any> {
-         return this.getImageStatsDb(client).collection("images");
+    private connected() {
+        console.log("Mongoose has connected");
     }
 
-    private getClient(): mongodb.MongoClient {
-        const uri = "mongodb+srv://admin:admin@cluster0-pyydy.mongodb.net/test?retryWrites=true&w=majority";
-        const client = new mongodb.MongoClient(uri, { useNewUrlParser: true });
-        return client;
+    private error(error: any) {
+        console.log("Mongoose has errored", error);
     }
 
 }

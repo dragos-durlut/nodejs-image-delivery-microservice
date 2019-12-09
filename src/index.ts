@@ -4,7 +4,7 @@ import { RequestImageValidatorService } from "./services/request-image-validator
 import { ServedImageService } from "./services/served-image-service";
 import { FolderStructureUtils } from "./utils/folder-structure-utils";
 const app = express();
-const port = 8080; // default port to listen
+const port = 3000; // default port to listen
 
 app.use(express.static("images")); // https://expressjs.com/en/starter/static-files.html
 
@@ -25,7 +25,6 @@ app.get("/image/:imageName/:imageResolution", async (req, res, next) => {
         res.status(404).send({ errors: imageValidatorService.errors });
     }
 
-    const dbClient: DbClient = new DbClient();
     const incrementTimesServed: boolean = true;
     let incrementTimesResized: boolean = false;
     let incrementTimesDirectlyServed: boolean = false;
@@ -34,7 +33,7 @@ app.get("/image/:imageName/:imageResolution", async (req, res, next) => {
     if (imageExistsPhysically) {
 
         incrementTimesDirectlyServed = true;
-        dbClient.incrementValue(imageName, incrementTimesServed, incrementTimesResized, incrementTimesDirectlyServed);
+        await DbClient.incrementImageValues(imageName, incrementTimesServed, incrementTimesResized, incrementTimesDirectlyServed);
 
         const imagePath = FolderStructureUtils.getImageWithResolutionPath(imageName, imageResolution);
         res.status(200).sendFile(imagePath);
@@ -46,7 +45,7 @@ app.get("/image/:imageName/:imageResolution", async (req, res, next) => {
     if (originalServedImage.existsOnFileSystem) {// if image exists we can proceed to try and serve the resized image
 
         incrementTimesResized = true;
-        dbClient.incrementValue(imageName, incrementTimesServed, incrementTimesResized, incrementTimesDirectlyServed);
+        await DbClient.incrementImageValues(imageName, incrementTimesServed, incrementTimesResized, incrementTimesDirectlyServed);
 
         const resizedImage = await serverImageService.getResizedServedImage(originalServedImage, imageResolution);
         res.status(200).sendFile(resizedImage.absolutePath);
@@ -58,8 +57,7 @@ app.get("/image/:imageName/:imageResolution", async (req, res, next) => {
 
 // define a route handler for the default home page
 app.get("/stats", async (req, res) => {
-    const dbClient: DbClient = new DbClient();
-    const html = await dbClient.getImagesCollectionHtml();
+    const html = await DbClient.getImagesCollectionHtml();
     res.status(200).send(html);
 });
 
