@@ -17,6 +17,10 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Content Include="src\db\image-schema.ts" />
+    <Content Include="src\images\original\cat.jpg" />
+    <Content Include="src\images\original\dog.jpg" />
+    <Content Include="src\images\original\eye.jpg" />
     <Content Include="src\index.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
@@ -28,6 +32,7 @@
   <ItemGroup>
     <Folder Include="src\" />
     <Folder Include="src\images\" />
+    <Folder Include="src\images\original\" />
     <Folder Include="src\models\" />
     <Folder Include="src\db\" />
     <Folder Include="src\test\" />
