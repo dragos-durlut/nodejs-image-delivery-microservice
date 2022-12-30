@@ -25,7 +25,7 @@
     "@types/request": "^2.48.3",
     "@types/sharp": "^0.23.1",
     "chai": "^4.2.0",
-    "mocha": "^6.2.2",
+    "mocha": "^10.2.0",
     "request": "^2.88.0",
     "ts-node": "^8.5.4",
     "tslint": "^5.20.1",
